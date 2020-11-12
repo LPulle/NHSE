@@ -20,22 +20,14 @@ folder <- "folderpath here" #can leave blank if using web method
 ## Find the latest amb url from website
 readambweb <- function(x) {
 html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
-if(x == "ambco") {
-patt <- "AmbCO-up-to" #this might change if the file name is changed in the future
-} else if (x == "ambsys") {
-patt <- "AmbSYS-to-2020" #this might change if the file name is changed in the future
-} else {
-patt <- NA #na if invalid
-}
-if(is.na(patt)) {
-	print("Unknown Parameter: Extract")
-	} else {
-	linknum <- html %>%  rvest::html_nodes("a") %>% 
-  		rvest::html_attr("href") %>% 
-  		stringr::str_which(pattern=patt)
-	url <- rvest::html_attr(rvest::html_nodes(html, "a"), "href")[linknum]
+if (extract == "ambco"){
+	url <- html %>% html_node("[href*='AmbCO'][href$='.csv']") %>% html_attr('href')
 	read.csv(url)
-	}
+	} else if (extract == "ambsys"){
+	url <- html %>% html_node("[href*='AmbSYS'][href$='.csv']") %>% html_attr('href')
+	read.csv(url)
+	} else { #do nothing
+		}
 }
 
 ## Check function's error handling by putting in something invalid
