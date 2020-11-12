@@ -60,8 +60,9 @@ regions <- grep("Y[0-9][0-9]", amb_filtered$Org.Code)
 england <- which(amb_filtered$Org.Code == "Eng")
 
 ## Identify columns which are to be weighted summed and meaned
-## - There is no pattern for ambsys so has to be hard 
+## - There is no pattern for ambsys so has to be hard coded
 ## - Ambco we can use some logic to identify the weighted columns, then everything else is summed
+
 ## weighted
 if(extract == "ambco") {
 weighted <- union(which(substring(names(amb_filtered), nchar(names(amb_filtered)), nchar(names(amb_filtered))) == "m"), 
