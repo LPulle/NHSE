@@ -15,7 +15,7 @@ extract <- "ambsys" #ambco or ambsys
 yearno <- 2020
 monthno <- 6
 method <- "web" #web or folder
-folder <- "C:/Users/pullel/OneDrive - NHS ​NEL CSU/NHSE PAT/Analysis/" #can leave blank if using web method
+folder <- "folderpath here" #can leave blank if using web method
 
 ## Find the latest amb url from website
 readambweb <- function(x) {
