@@ -17,9 +17,6 @@ url <- rvest::html_attr(rvest::html_nodes(html, "a"), "href")[linknum]
 ## Read the csv from url
 ambco <- read.csv(url)
 
-## Read the csv from onedrive
-#ambco <- read.csv("C:/Users/pullel/OneDrive - NHS ?NEL CSU/NHSE PAT/Analysis/QA/AmbCO - up to 20200630.csv")
-
 ## Filter to month required
 ambco_filtered <- ambco %>%  
   dplyr::filter(Year == 2020, Month == 2) ##change this if checking a different month
