@@ -21,10 +21,6 @@ ambsys <- read.csv(url)
 ambsys_filtered <- ambsys %>%  
   dplyr::filter(Year == 2020, Month == 9) ##change this if checking a different month
 
-## Or read filtered file from csv 
-#ambsys_filtered <- read.csv("C:/Users/pullel/OneDrive - NHS ?NEL CSU/NHSE PAT/Analysis/ambsys_filtered.csv")
-
-
 ## Identify region and all england rows
 ## ambsys_filtered[-grep("Y[0-9][0-9]", ambsys_filtered$Org.Code),] #region codes are Y+nn
 regions <- grep("Y[0-9][0-9]", ambsys_filtered$Org.Code)
