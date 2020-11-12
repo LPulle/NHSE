@@ -7,12 +7,15 @@ if (!require(tidyverse)) install.packages("tidyverse"); library(tidyverse)
 if (!require(rvest)) install.packages("rvest"); library(rvest)
 detach("package:dplyr"); library(dplyr) #ensure dplyr is loaded last in case i forget to prefix the filter function
 
+## Custom round function - R uses IEE 754 rules which we don't want
+rnd <- function(x) trunc(x+sign(x)*0.5)
+
 ## Parameters - change these and will cascade through
-extract <- "ambco" #ambco or ambsys
+extract <- "ambsys" #ambco or ambsys
 yearno <- 2020
 monthno <- 6
 method <- "web" #web or folder
-folder <- "file > path > here" #can leave blank if using web method
+folder <- "C:/Users/pullel/OneDrive - NHS ​NEL CSU/NHSE PAT/Analysis/" #can leave blank if using web method
 
 ## Find the latest amb url from website
 readambweb <- function(x) {
@@ -132,7 +135,7 @@ sum(amb_filtered[-regions, meanlookup$num[
                   meanlookup$metric)]][-england,][,x]) / sum(amb_filtered[-regions, meanlookup$denom[
 			match(names(amb_filtered[-regions, meaned][-england,]), 
                   meanlookup$metric)]][-england,][,x])}) %>% 
-				round(, digits = 0) %>% 
+				rnd() %>% 
 				data.frame() %>%
 				cbind(., t(amb_filtered[england, meaned]))
 names(amb_filtered_meaned) <- c("total", "England")
@@ -149,7 +152,7 @@ amb_filtered[-regions, weightedlookup$denom[match(names(amb_filtered[-regions, w
 weightede <- as.numeric(amb_filtered[england, weightedlookup$denom[match(names(amb_filtered[england, weighted]), weightedlookup$num)]])
 ## divide by the england figure and combine calculated and value in download into data frame
 if(extract == "ambsys") {
-amb_filtered_weighted <- cbind(data.frame(total=round(weightedt/weightede,0)), t(amb_filtered[england, weighted]))
+amb_filtered_weighted <- cbind(data.frame(total=rnd(weightedt/weightede)), t(amb_filtered[england, weighted]))
 } else {
 amb_filtered_weighted <- cbind(data.frame(total=weightedt/weightede), t(amb_filtered[england, weighted]))
 }
@@ -161,7 +164,7 @@ mylist <- vector("list", length=length(rc)) #summed
 mylistw <- vector("list", length=length(rc)) #weighted
 mylistm <- vector("list", length=length(rc)) #meaned
 
-i <- 1
+i <- 2
 for (i in (1:length(rc))) {
   j <- rc[i]
   k <- which(amb_filtered$Org.Code %in% RegionMap$Org.Code[which(RegionMap$Region.Code == rc[i])])
@@ -179,7 +182,7 @@ for (i in (1:length(rc))) {
 			match(names(amb_filtered[k, meaned]), 
                   meanlookup$metric)]][,x])}
 			) %>% 
-			round(, digits = 0) %>% 
+			rnd() %>% 
 			data.frame() %>% 
 			cbind(., t(amb_filtered[m, meaned]))
   } else { #do nothing
@@ -191,7 +194,7 @@ for (i in (1:length(rc))) {
                                                                       weightedlookup$num)]][,x])})
   weightedtw <- as.numeric(amb_filtered[m, weightedlookup$denom[match(names(amb_filtered[m, weighted]), weightedlookup$num)]])
   mylistw[[i]] <- if(extract == "ambsys") {
-	cbind(round(weightedew / weightedtw, 0), t(amb_filtered[m, weighted]))
+	cbind(rnd(weightedew / weightedtw), t(amb_filtered[m, weighted]))
 	} else {
 	cbind(weightedew / weightedtw, t(amb_filtered[m, weighted]))
   }
@@ -231,7 +234,7 @@ table(amb_filtered_meaned[,1] == amb_filtered_meaned[,2])
 }
 ## test weighted columns = england rounded to 0 dps for ambsys 7 sigfigs for ambco
 if(extract == "ambsys") {
-table(round(amb_filtered_weighted$total,0) == round(amb_filtered_weighted$England, 0))
+table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))
 } else {
 table(format(amb_filtered_weighted$total, scientific=T, digits=7) == format(amb_filtered_weighted$England, scientific=T, digits=7))
 }
