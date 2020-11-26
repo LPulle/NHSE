@@ -1,3 +1,5 @@
+## If R version < 4.0 you need to set this option
+options(stringsAsFactors=FALSE)
 ## Clear Existing Objects
 ## This is lazy but ensures everything is clear when we run
 rm(list = ls(all = T))
