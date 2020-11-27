@@ -24,19 +24,13 @@ folder <- "folderpath here" # can leave blank if using web method
 
 ## Find the latest amb url from website
 readambweb <- function(x) {
-  html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
-  if (extract == "ambco") {
-    url <- html %>%
-      html_node("[href*='AmbCO'][href$='.csv']") %>%
-      html_attr("href")
-    read.csv(url)
-  } else if (extract == "ambsys") {
-    url <- html %>%
-      html_node("[href*='AmbSYS'][href$='.csv']") %>%
-      html_attr("href")
-    read.csv(url)
-  } else { # do nothing
-  }
+    html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
+    if (extract %in% c("ambco", "ambsys")) {
+        css_selector <- paste0(switch(x, ambco = "[href*='AmbCO']", ambsys = "[href*='AmbSYS']"), "[href$='.csv']")
+        url <- html %>% html_node(css_selector) %>% html_attr("href")
+        read.csv(url)
+    } else {
+    }
 }
 
 ## Check function's error handling by putting in something invalid
