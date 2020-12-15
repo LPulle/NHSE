@@ -33,9 +33,6 @@ readambweb <- function(x) {
     }
 }
 
-## Check function's error handling by putting in something invalid
-# readambweb("hhh")
-
 ## Get the data
 if (method == "web") {
   ## Read the csv from web using function and filter
