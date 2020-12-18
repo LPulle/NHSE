@@ -184,6 +184,8 @@ if (extract == "ambsys") {
 }
 names(amb_filtered_weighted)[2] <- "England"
 
+## old periods don't have the weighted metrics - set to 0 if they error out
+amb_filtered_weighted[is.na(amb_filtered_weighted)] <- 0
 
 ## Loop through each region with more than 1 trust for summed columns then repeat for the weighted ones
 mylist <- vector("list", length = length(rc)) # summed
@@ -244,11 +246,13 @@ mylist <- lapply(seq_along(mylist), function(i) {
   mylist[[i]]
 })
 
+if(extract == "ambsys") {
 names(mylistm) <- rc
 mylistm <- lapply(seq_along(mylistm), function(i) {
   colnames(mylistm[[i]]) <- c(names(mylistm)[i], "Region")
   mylistm[[i]]
-})
+})} else { #do nothing
+  }
 
 names(mylistw) <- rc
 mylistw <- lapply(seq_along(mylistw), function(i) {
@@ -256,6 +260,8 @@ mylistw <- lapply(seq_along(mylistw), function(i) {
   mylistw[[i]]
 })
 
+## patch NaN with 0
+mylistw <- rapply(mylistw, f=function(x) ifelse(is.nan(x),0,x), how="replace" )
 
 ####################################
 ## Tests
