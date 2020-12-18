@@ -52,7 +52,7 @@ periods1 <- periods
 
 ## Create data frame to hold test outputs
 output <- data.frame(
-  Period = integer(),
+  Period = character(),
   test1true = numeric(),
   test1false = numeric(), 
   test2true = numeric(),
