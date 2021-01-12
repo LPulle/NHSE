@@ -39,10 +39,13 @@ if (method == "web") {
   amb_filtered <- readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
 } else if (method == "folder") {
   ## Read the csv from file - this file should be pre-filtered to month required
-  amb_filtered <- read.csv(paste0(folder, extract, "_filtered.csv"))
+  amb_filtered <- read.csv(paste0(folder, extract, "_filtered.csv")) %>% dplyr::filter(Year == yearno, Month == monthno)
 } else {
   print("Unknown Parameter: Method")
 }
+
+## Check what periods were loaded into amb_filtered
+table(amb_filtered[,c("Year", "Month")])
 
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb_filtered[, -c(1:5)] <- suppressWarnings(apply(amb_filtered[, -c(1:5)], 2, as.numeric))
