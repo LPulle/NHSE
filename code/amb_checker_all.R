@@ -35,7 +35,7 @@ readambweb <- function(x) {
 
 ## Get the data
 if (method == "web") {
-  ## Read the csv from web using function and filter
+  ## Read the whole csv from web using the readambweb function
   amb <- readambweb(extract)
 } else if (method == "folder") {
   ## Read the whole time series csv from file
