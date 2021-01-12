@@ -18,7 +18,7 @@ rnd <- function(x) trunc(x + sign(x) * 0.5)
 ## Parameters - change these and will cascade through
 extract <- "ambsys" # ambco or ambsys
 yearno <- 2020
-monthno <- 6
+monthno <- 11
 method <- "web" # web or folder
 folder <- "folderpath here" # can leave blank if using web method
 
@@ -48,7 +48,7 @@ if (method == "web") {
 table(amb_filtered[,c("Year", "Month")])
 
 ## Check for dashes - if this is not zero needs to be fixed in the file
-grep("–|-", amb)
+grep("–|-", amb_filtered)
 
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb_filtered[, -c(1:5)] <- suppressWarnings(apply(amb_filtered[, -c(1:5)], 2, as.numeric))
