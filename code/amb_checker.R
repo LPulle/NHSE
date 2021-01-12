@@ -47,6 +47,9 @@ if (method == "web") {
 ## Check what periods were loaded into amb_filtered
 table(amb_filtered[,c("Year", "Month")])
 
+## Check for dashes - if this is not zero needs to be fixed in the file
+grep("–|-", amb)
+
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb_filtered[, -c(1:5)] <- suppressWarnings(apply(amb_filtered[, -c(1:5)], 2, as.numeric))
 amb_filtered[is.na(amb_filtered)] <- 0
