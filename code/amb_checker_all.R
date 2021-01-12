@@ -16,7 +16,7 @@ library(dplyr) # ensure dplyr is loaded last in case i forget to prefix the filt
 rnd <- function(x) trunc(x + sign(x) * 0.5)
 
 ## Parameters - change these and will cascade through
-extract <- "ambco" # ambco or ambsys
+extract <- "ambsys" # ambco or ambsys
 method <- "web" # web or folder
 folder <- "folderpath here" # can leave blank if using web method
 
@@ -43,6 +43,9 @@ if (method == "web") {
 } else {
   print("Unknown Parameter: Method")
 }
+
+## Check for dashes - if this is not zero needs to be fixed in the file
+grep("–|-", amb)
 
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb[, -c(1:5)] <- suppressWarnings(apply(amb[, -c(1:5)], 2, as.numeric))
@@ -468,3 +471,4 @@ output[, -1] <- suppressWarnings(apply(output[, -1], 2, as.numeric))
 sum(colSums(output[, fc]))
 
 ## If there are any rows where a false test > 0 you should run that period manually using amb_checker.R
+
