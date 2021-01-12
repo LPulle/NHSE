@@ -278,7 +278,8 @@ if (extract == "ambsys") {
 if (extract == "ambsys") {
   table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))
 } else {
-  table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))
+  #table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))
+  data.frame(table(mapply(function(x, y) {isTRUE(all.equal(x, y))}, amb_filtered_weighted$total, amb_filtered_weighted$England)))
 }
 
 
@@ -296,10 +297,18 @@ if (extract == "ambsys") {
 }
 
 ## test weighted columns match region
+## test weighted columns match region
+#testregionsw <- data.frame(lapply(
+#  c(1:length(mylistw)),
+#  function(i) format(mylistw[[i]][, 1], scientific = T, digits = 7) == format(mylistw[[i]][, 2], scientific = T, digits = 7)
+#))
+
 testregionsw <- data.frame(lapply(
   c(1:length(mylistw)),
-  function(i) format(mylistw[[i]][, 1], scientific = T, digits = 7) == format(mylistw[[i]][, 2], scientific = T, digits = 7)
+  function(i) 
+    mapply(function(x, y) {isTRUE(all.equal(x, y))}, mylistw[[i]][, 1], mylistw[[i]][, 2])
 ))
+                                    
 names(testregionsw) <- rc # c("Region1", "Region2", "Region3")
 table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))
 
