@@ -45,7 +45,7 @@ if (method == "web") {
 }
 
 ## Check for dashes - if this is not zero needs to be fixed in the file
-grep("–|-", amb)
+dashes <- grep("–|-", amb)
 
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb[, -c(1:5)] <- suppressWarnings(apply(amb[, -c(1:5)], 2, as.numeric))
@@ -470,5 +470,8 @@ fc <- grep("false", names(output))
 output[, -1] <- suppressWarnings(apply(output[, -1], 2, as.numeric))
 sum(colSums(output[, fc]))
 
+## output dashes check
+print(paste0("There are ", length(dashes), " dashes in the csv"))
+                                      
 ## If there are any rows where a false test > 0 you should run that period manually using amb_checker.R
 
