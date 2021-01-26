@@ -48,7 +48,7 @@ if (method == "web") {
 table(amb_filtered[,c("Year", "Month")])
 
 ## Check for dashes - if this is not zero needs to be fixed in the file
-grep("–|-", amb_filtered)
+dashes <- grep("–|-", amb_filtered)
 
 ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
 amb_filtered[, -c(1:5)] <- suppressWarnings(apply(amb_filtered[, -c(1:5)], 2, as.numeric))
@@ -337,8 +337,15 @@ if (data.frame(`FALSE` = length(which(SingleRegion == F))) > 0) {
   print(amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Region.Code), -c(1:4)] %>% arrange(Org.Name))
 }
 
+## output dashes check
+print(paste0("There are ", length(dashes), " dashes in the csv"))
+                                    
 ## Output calculations to csv - can output both data sets: df's and lists to csv
-# write.csv(rbind(amb_filtered_summed, amb_filtered_meaned, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
+# if(extract == "ambsys") {
+#	write.csv(rbind(amb_filtered_summed, amb_filtered_meaned, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
+#	} else {
+#	write.csv(rbind(amb_filtered_summed, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
+# }
 # write.csv(
 # rbind(cbind(data.frame(mylist[[1]]), data.frame(mylist[[2]]), data.frame(mylist[[3]])),
 # cbind(data.frame(mylistm[[1]]), data.frame(mylistm[[2]]), data.frame(mylistm[[3]])),
