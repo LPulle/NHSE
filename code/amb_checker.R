@@ -289,14 +289,14 @@ mylistw <- rapply(mylistw, f = function(x) ifelse(is.nan(x), 0, x), how = "repla
 ####################################
 
 ## test summed columns = england
-table(amb_filtered_summed$total == amb_filtered_summed$England)
+test1 <- table(amb_filtered_summed$total == amb_filtered_summed$England)
 ## test meaned columns = england
-if (extract == "ambsys") {
+test2 <- if (extract == "ambsys") {
   table(amb_filtered_meaned[, 1] == amb_filtered_meaned[, 2])
 } else { # do nothing
 }
 ## test weighted columns = england rounded to 0 dps for ambsys 7 sigfigs for ambco
-if (extract == "ambsys") {
+test3 <- if (extract == "ambsys") {
   table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))
 } else {
   # table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))
@@ -309,10 +309,10 @@ if (extract == "ambsys") {
 ## test summed columns match region
 testregions <- data.frame(lapply(c(1:length(mylist)), function(i) mylist[[i]][, 1] == mylist[[i]][, 2]))
 names(testregions) <- rc # c("Region1", "Region2", "Region3")
-table(rbind(testregions[, 1], testregions[, 2], testregions[, 3]))
+test4 <- table(rbind(testregions[, 1], testregions[, 2], testregions[, 3]))
 
 ## test meaned columns match region
-if (extract == "ambsys") {
+test5 <- if (extract == "ambsys") {
   testregionsm <- data.frame(lapply(c(1:length(mylistm)), function(i) mylistm[[i]][, 1] == mylistm[[i]][, 2]))
   names(testregionsm) <- rc # c("Region1", "Region2", "Region3")
   table(rbind(testregionsm[, 1], testregionsm[, 2], testregionsm[, 3]))
@@ -336,7 +336,7 @@ testregionsw <- data.frame(lapply(
 ))
 
 names(testregionsw) <- rc # c("Region1", "Region2", "Region3")
-table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))
+test6 <- table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))
 
 ## test single trust to single region
 RegionMapSingle <- RegionMap[-which(RegionMap$Region.Code %in% rc), ][-england, ]
@@ -345,7 +345,7 @@ SingleRegion <- amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Or
   select(-1) == amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Region.Code), -c(1:4)] %>%
   arrange(Org.Name) %>%
   select(-1)
-cbind(
+test7 <- cbind(
   data.frame(`TRUE` = length(which(SingleRegion == T))),
   data.frame(`FALSE` = length(which(SingleRegion == F)))
 )
@@ -357,12 +357,8 @@ if (data.frame(`FALSE` = length(which(SingleRegion == F))) > 0) {
   print(amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Region.Code), -c(1:4)] %>% arrange(Org.Name))
 }
 
-## output dashes check
-print(paste0("There are ", length(dashes), " dashes in the csv"))
-
-print(ErrorHandler)
-
 ## Output calculations to csv - can output both data sets: df's and lists to csv
+## Moved it above the final output so it doesn't clog the screen at the end
 # if(extract == "ambsys") {
 # 	write.csv(rbind(amb_filtered_summed, amb_filtered_meaned, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
 # 	} else {
@@ -373,3 +369,16 @@ print(ErrorHandler)
 # cbind(data.frame(mylistm[[1]]), data.frame(mylistm[[2]]), data.frame(mylistm[[3]])),
 # cbind(data.frame(mylistw[[1]]), data.frame(mylistw[[2]]), data.frame(mylistw[[3]]))),
 # file="amb_check2.csv")
+
+
+## output test results in a list
+tests <- list("test1" = test1, "test2" = test2, "test3" = test3, "test4" = test4, 
+     "test5" = test5, "test6" = test6, "test7" = test7)
+tests
+
+## output dashes check
+print(paste0("There are ", length(dashes), " dashes in the csv"))
+
+## output ErrorHandler
+print(ErrorHandler)
+
