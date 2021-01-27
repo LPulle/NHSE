@@ -5,16 +5,17 @@ options(stringsAsFactors = FALSE)
 rm(list = ls(all = T))
 
 ## Load packages - check if installed first - if not install them
-if(!require(conflicted)) install.packages("conflicted")
+if (!require(conflicted)) install.packages("conflicted")
 library(conflicted)
-conflict_prefer("filter", "dplyr")
+conflicted::conflict_prefer("filter", "dplyr") # prefer dplyr for filter function
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
 if (!require(rvest)) install.packages("rvest")
 library(rvest)
-detach("package:dplyr")
-library(dplyr) # ensure dplyr is loaded last in case i forget to prefix the filter function
 
+## Old method - detach then re-attach dplyr forcing it to mask existing functions with the same name
+# detach("package:dplyr")
+# library(dplyr) # ensure dplyr is loaded last in case i forget to prefix the filter function
 
 ## Custom round function - R uses IEE 754 rules which we don't want
 rnd <- function(x) trunc(x + sign(x) * 0.5)
@@ -51,10 +52,11 @@ if (method == "web") {
 }
 
 ## Error Handler in case data read into amb_filtered is empty
-ErrorHandler <- if (nrow(amb_filtered) == 0) {"Error: No data imported - likely invalid period or file headings"
+ErrorHandler <- if (nrow(amb_filtered) == 0) {
+  "Error: No data imported - likely invalid period or file headings"
 } else {
-    "Data was imported - checker should've run correctly"
-  }
+  "Data was imported - checker should've run correctly"
+}
 
 ## Check what periods were loaded into amb_filtered
 table(amb_filtered[, c("Year", "Month")])
@@ -72,7 +74,7 @@ england <- which(amb_filtered$Org.Code == "Eng")
 
 ## Identify columns which are to be weighted summed and meaned
 ## - There is no pattern for ambsys so has to be hard coded
-## - Ambco we can use some logic to identify the weighted columns, then everything else is summed
+## - ambco we can use some logic to identify the weighted columns, then everything else is summed
 
 ## weighted
 if (extract == "ambco") {
