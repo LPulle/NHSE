@@ -348,8 +348,10 @@ for (period in (1:(length(periods1)))) {
       select(Freq)
   } else {
     output[period, 6] <-
-      #data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
-      data.frame(table(mapply(function(x, y) {isTRUE(all.equal(x, y))}, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
+      # data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
+      data.frame(table(mapply(function(x, y) {
+        isTRUE(all.equal(x, y))
+      }, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
       filter(Var1 == T) %>%
       select(Freq)
   }
@@ -357,7 +359,7 @@ for (period in (1:(length(periods1)))) {
   if (extract == "ambsys") {
     output[period, 7] <-
       if (nrow(data.frame(table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))) %>%
-               filter(Var1 == F)) > 0
+        filter(Var1 == F)) > 0
       ) {
         data.frame(table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))) %>%
           filter(Var1 == F) %>%
@@ -367,11 +369,15 @@ for (period in (1:(length(periods1)))) {
       }
   } else {
     output[period, 7] <-
-      #if (nrow(data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
-      if (nrow(data.frame(table(mapply(function(x, y) {isTRUE(all.equal(x, y))}, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
-               filter(Var1 == F)) > 0) {
-        #data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
-        data.frame(table(mapply(function(x, y) {isTRUE(all.equal(x, y))}, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
+      # if (nrow(data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
+      if (nrow(data.frame(table(mapply(function(x, y) {
+        isTRUE(all.equal(x, y))
+      }, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
+        filter(Var1 == F)) > 0) {
+        # data.frame(table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))) %>%
+        data.frame(table(mapply(function(x, y) {
+          isTRUE(all.equal(x, y))
+        }, amb_filtered_weighted$total, amb_filtered_weighted$England))) %>%
           filter(Var1 == F) %>%
           select(Freq)
       } else {
@@ -420,16 +426,19 @@ for (period in (1:(length(periods1)))) {
 
   ## test weighted columns match region
 
-  #testregionsw <- data.frame(lapply(
+  # testregionsw <- data.frame(lapply(
   #  c(1:length(mylistw)),
-  #  function(i) 
+  #  function(i)
   #    format(mylistw[[i]][, 1], scientific = T, digits = 7) == format(mylistw[[i]][, 2], scientific = T, digits = 7)
-  #))
-  
+  # ))
+
   testregionsw <- data.frame(lapply(
     c(1:length(mylistw)),
-    function(i) 
-    mapply(function(x, y) {isTRUE(all.equal(x, y))}, mylistw[[i]][, 1], mylistw[[i]][, 2])
+    function(i) {
+      mapply(function(x, y) {
+        isTRUE(all.equal(x, y))
+      }, mylistw[[i]][, 1], mylistw[[i]][, 2])
+    }
   ))
 
   names(testregionsw) <- rc # c("Region1", "Region2", "Region3")
@@ -461,7 +470,7 @@ for (period in (1:(length(periods1)))) {
 }
 
 ## Final output sorted by period
-options(max.print=1000000)
+options(max.print = 1000000)
 output %>%
   arrange(1) %>%
   data.frame()
@@ -473,6 +482,5 @@ sum(colSums(output[, fc]))
 
 ## output dashes check
 print(paste0("There are ", length(dashes), " dashes in the csv"))
-                                      
-## If there are any rows where a false test > 0 you should run that period manually using amb_checker.R
 
+## If there are any rows where a false test > 0 you should run that period manually using amb_checker.R

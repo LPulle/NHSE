@@ -1,5 +1,5 @@
 ## If R version < 4.0 you need to set this option
-options(stringsAsFactors=FALSE)
+options(stringsAsFactors = FALSE)
 ## Clear Existing Objects
 ## This is lazy but ensures everything is clear when we run
 rm(list = ls(all = T))
@@ -24,13 +24,15 @@ folder <- "folderpath here" # can leave blank if using web method
 
 ## Find the latest amb url from website
 readambweb <- function(x) {
-    html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
-    if (extract %in% c("ambco", "ambsys")) {
-        css_selector <- paste0(switch(x, ambco = "[href*='AmbCO']", ambsys = "[href*='AmbSYS']"), "[href$='.csv']")
-        url <- html %>% html_node(css_selector) %>% html_attr("href")
-        read.csv(url)
-    } else {
-    }
+  html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
+  if (extract %in% c("ambco", "ambsys")) {
+    css_selector <- paste0(switch(x, ambco = "[href*='AmbCO']", ambsys = "[href*='AmbSYS']"), "[href$='.csv']")
+    url <- html %>%
+      html_node(css_selector) %>%
+      html_attr("href")
+    read.csv(url)
+  } else {
+  }
 }
 
 ## Get the data
@@ -45,7 +47,7 @@ if (method == "web") {
 }
 
 ## Check what periods were loaded into amb_filtered
-table(amb_filtered[,c("Year", "Month")])
+table(amb_filtered[, c("Year", "Month")])
 
 ## Check for dashes - if this is not zero needs to be fixed in the file
 dashes <- grep("–|-", amb_filtered)
@@ -252,13 +254,14 @@ mylist <- lapply(seq_along(mylist), function(i) {
   mylist[[i]]
 })
 
-if(extract == "ambsys") {
-names(mylistm) <- rc
-mylistm <- lapply(seq_along(mylistm), function(i) {
-  colnames(mylistm[[i]]) <- c(names(mylistm)[i], "Region")
-  mylistm[[i]]
-})} else { #do nothing
-  }
+if (extract == "ambsys") {
+  names(mylistm) <- rc
+  mylistm <- lapply(seq_along(mylistm), function(i) {
+    colnames(mylistm[[i]]) <- c(names(mylistm)[i], "Region")
+    mylistm[[i]]
+  })
+} else { # do nothing
+}
 
 names(mylistw) <- rc
 mylistw <- lapply(seq_along(mylistw), function(i) {
@@ -267,7 +270,7 @@ mylistw <- lapply(seq_along(mylistw), function(i) {
 })
 
 ## patch NaN with 0
-mylistw <- rapply(mylistw, f=function(x) ifelse(is.nan(x),0,x), how="replace" )
+mylistw <- rapply(mylistw, f = function(x) ifelse(is.nan(x), 0, x), how = "replace")
 
 ####################################
 ## Tests
@@ -284,8 +287,10 @@ if (extract == "ambsys") {
 if (extract == "ambsys") {
   table(rnd(amb_filtered_weighted$total) == rnd(amb_filtered_weighted$England))
 } else {
-  #table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))
-  data.frame(table(mapply(function(x, y) {isTRUE(all.equal(x, y))}, amb_filtered_weighted$total, amb_filtered_weighted$England)))
+  # table(format(amb_filtered_weighted$total, scientific = T, digits = 7) == format(amb_filtered_weighted$England, scientific = T, digits = 7))
+  data.frame(table(mapply(function(x, y) {
+    isTRUE(all.equal(x, y))
+  }, amb_filtered_weighted$total, amb_filtered_weighted$England)))
 }
 
 
@@ -304,17 +309,20 @@ if (extract == "ambsys") {
 
 ## test weighted columns match region
 ## test weighted columns match region
-#testregionsw <- data.frame(lapply(
+# testregionsw <- data.frame(lapply(
 #  c(1:length(mylistw)),
 #  function(i) format(mylistw[[i]][, 1], scientific = T, digits = 7) == format(mylistw[[i]][, 2], scientific = T, digits = 7)
-#))
+# ))
 
 testregionsw <- data.frame(lapply(
   c(1:length(mylistw)),
-  function(i) 
-    mapply(function(x, y) {isTRUE(all.equal(x, y))}, mylistw[[i]][, 1], mylistw[[i]][, 2])
+  function(i) {
+    mapply(function(x, y) {
+      isTRUE(all.equal(x, y))
+    }, mylistw[[i]][, 1], mylistw[[i]][, 2])
+  }
 ))
-                                    
+
 names(testregionsw) <- rc # c("Region1", "Region2", "Region3")
 table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))
 
@@ -339,12 +347,12 @@ if (data.frame(`FALSE` = length(which(SingleRegion == F))) > 0) {
 
 ## output dashes check
 print(paste0("There are ", length(dashes), " dashes in the csv"))
-                                    
+
 ## Output calculations to csv - can output both data sets: df's and lists to csv
 # if(extract == "ambsys") {
-#	write.csv(rbind(amb_filtered_summed, amb_filtered_meaned, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
-#	} else {
-#	write.csv(rbind(amb_filtered_summed, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
+# 	write.csv(rbind(amb_filtered_summed, amb_filtered_meaned, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
+# 	} else {
+# 	write.csv(rbind(amb_filtered_summed, amb_filtered_weighted), file = "amb_check.csv", row.names = T)
 # }
 # write.csv(
 # rbind(cbind(data.frame(mylist[[1]]), data.frame(mylist[[2]]), data.frame(mylist[[3]])),
