@@ -50,6 +50,12 @@ if (method == "web") {
   print("Unknown Parameter: Method")
 }
 
+## Error Handler in case data read into amb_filtered is empty
+ErrorHandler <- if (nrow(amb_filtered) == 0) {"Error: No data imported - likely invalid period or file headings"
+} else {
+    "Data was imported - checker should've run correctly"
+  }
+
 ## Check what periods were loaded into amb_filtered
 table(amb_filtered[, c("Year", "Month")])
 
@@ -351,6 +357,8 @@ if (data.frame(`FALSE` = length(which(SingleRegion == F))) > 0) {
 
 ## output dashes check
 print(paste0("There are ", length(dashes), " dashes in the csv"))
+
+print(ErrorHandler)
 
 ## Output calculations to csv - can output both data sets: df's and lists to csv
 # if(extract == "ambsys") {
