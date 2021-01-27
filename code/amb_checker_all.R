@@ -5,15 +5,17 @@ options(stringsAsFactors = FALSE)
 rm(list = ls(all = T))
 
 ## Load packages - check if installed first - if not install them
-if(!require(conflicted)) install.packages("conflicted")
+if (!require(conflicted)) install.packages("conflicted")
 library(conflicted)
-conflict_prefer("filter", "dplyr")
+conflicted::conflict_prefer("filter", "dplyr") # prefer dplyr for filter function
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
 if (!require(rvest)) install.packages("rvest")
 library(rvest)
-detach("package:dplyr")
-library(dplyr) # ensure dplyr is loaded last in case i forget to prefix the filter function
+
+## Old method - detach then re-attach dplyr forcing it to mask existing functions with the same name
+# detach("package:dplyr")
+# library(dplyr) # ensure dplyr is loaded last in case i forget to prefix the filter function
 
 ## Custom round function - R uses IEE 754 rules which we don't want
 rnd <- function(x) trunc(x + sign(x) * 0.5)
