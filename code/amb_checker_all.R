@@ -461,6 +461,7 @@ for (period in (1:(length(periods1)))) {
 }
 
 ## Final output sorted by period
+options(max.print=1000000)
 output %>%
   arrange(1) %>%
   data.frame()
