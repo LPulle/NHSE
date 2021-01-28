@@ -1,6 +1,6 @@
 ## If R version < 4.0 you need to set this option
-options(stringsAsFactors = FALSE)
-
+if(paste(R.Version()$major, R.Version()$minor, sep=".") < 4) 
+  options(stringsAsFactors = FALSE)
 
 ## Load packages - check if installed first - if not install them
 if (!require(conflicted)) install.packages("conflicted")
@@ -14,25 +14,25 @@ if (!require(shiny)) install.packages("shiny")
 library(shiny)
 
 # Data pre-processing ----
-# Tweak the "am" variable to have nicer factor labels -- since this
-# doesn't rely on any user inputs, we can do this once at startup
-# and then use the value throughout the lifetime of the app
+## Functions and values for the input selectors
+## input selectors
 Extract <- c("ambsys", "ambco")
 Year <- seq(2020, 2050, by = 1)
 Month <- seq(1, 12, by = 1)
 
+## Functions
 ## Find the latest amb url from website
 readambweb <- function(x) {
   html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
-  if (extract %in% c("ambco", "ambsys")) {
     css_selector <- paste0(switch(x, ambco = "[href*='AmbCO']", ambsys = "[href*='AmbSYS']"), "[href$='.csv']")
     url <- html %>%
       html_node(css_selector) %>%
       html_attr("href")
     read.csv(url)
-  } else {
-  }
 }
+
+## Custom round function - R uses IEE 754 rules which we don't want
+rnd <- function(x) trunc(x + sign(x) * 0.5)
 
 #mpgData <- mtcars
 #mpgData$am <- factor(mpgData$am, labels = c("Automatic", "Manual"))
@@ -71,7 +71,8 @@ ui <- fluidPage(
     mainPanel(
       
       # Output: Data file ----
-      tableOutput("contents")
+      textOutput("selected_var"),
+          tableOutput("contents")
       
     )
   )
@@ -84,33 +85,17 @@ server <- function(input, output) {
   # Note that we use eventReactive() here, which depends on
   # input$update (the action button), so that the output is only
   # updated when the user clicks the button
-  output$contents <- renderTable({
-  yearno <- input$Var2
-  monthno <- input$Var3
-  amb_filtered <- readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
-  
-  return(head(amb_filtered))
-  
-  #datasetInput <- eventReactive(input$update, {
-  #  switch(input$dataset,
-  #         "rock" = rock,
-  #         "pressure" = pressure,
-  #         "cars" = cars)
-  #}, ignoreNULL = FALSE)
-  
-  # Generate a summary of the dataset ----
-  #output$summary <- renderPrint({
-  #  dataset <- datasetInput()
-  #  summary(dataset)
-  #})
-  
-  # Show the first "n" observations ----
-  # The use of isolate() is necessary because we don't want the table
-  # to update whenever input$obs changes (only when the user clicks
-  # the action button)
-  #output$view <- renderTable({
-  #  head(datasetInput(), n = isolate(input$obs))
+  output$selected_var <- renderText({ 
+    paste("You have selected", input$Var1, "; Year:", input$Var2, "; Month:", input$Var3)
   })
+  
+  
+  output$contents <- renderTable({
+    yearno <- input$Var2
+    monthno <- input$Var3
+    amb_filtered <- readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
+    return(head(amb_filtered))
+    })
   
 }
 
