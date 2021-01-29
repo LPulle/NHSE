@@ -14,7 +14,7 @@ library(shiny)
 
 # Data pre-processing ----
 ## Load some base data so the server functions can load
-load("shiny/amb_checker_all_web/initialdata.rda")
+load("initialdata.rda")
 
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
@@ -557,7 +557,7 @@ server <- function(input, output) {
   output$Invalid <- renderText({
     print(paste0(
       "There are ", sum(colSums(datasetInput()[, grep("false", names(datasetInput()))])),
-      " invalid rows"
+      " invalid data item(s)"
     ))
   })
 
