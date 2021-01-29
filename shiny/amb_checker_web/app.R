@@ -90,12 +90,17 @@ server <- function(input, output) {
   })
   
   
-  output$contents <- renderTable({
+  datasetInput <- eventReactive(input$update, {
+    extract <- input$Var1
     yearno <- input$Var2
     monthno <- input$Var3
-    amb_filtered <- readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
+    readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
+  })
+  
+  output$contents <- renderTable({
+    amb_filtered <- datasetInput()
     return(head(amb_filtered))
-    })
+  })
   
 }
 

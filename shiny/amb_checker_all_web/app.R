@@ -34,84 +34,88 @@ readambweb <- function(x) {
   }
 }
 
-#mpgData <- mtcars
-#mpgData$am <- factor(mpgData$am, labels = c("Automatic", "Manual"))
+# mpgData <- mtcars
+# mpgData$am <- factor(mpgData$am, labels = c("Automatic", "Manual"))
 
 
 # Define UI for miles per gallon app ----
 ui <- fluidPage(
-  
+
   # App title ----
   titlePanel("Amb CSV web checker"),
-  
+
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
-    
+
     # Sidebar panel for inputs ----
     sidebarPanel(
-      
+
       # Input: Selector for variable to plot against mpg ----
       selectInput("Var1", "Extract:", Extract),
       selectInput("Var2", "Year:", Year),
       selectInput("Var3", "Month:", Month),
-      
+
       # Input: Checkbox for whether outliers should be included ----
-      #checkboxInput("outliers", "Show outliers", TRUE)
-      
+      # checkboxInput("outliers", "Show outliers", TRUE)
+
       # Input: actionButton() to defer the rendering of output ----
       # until the user explicitly clicks the button (rather than
       # doing it immediately when inputs change). This is useful if
       # the computations required to render output are inordinately
       # time-consuming.
       actionButton("update", "Check CSV")
-      
     ),
-    
+
     # Main panel for displaying outputs ----
     mainPanel(
-      
+
       # Output: Data file ----
       tableOutput("contents")
-      
     )
   )
 )
 
 # Define server logic to plot various variables against mpg ----
 server <- function(input, output) {
-  
+
   # Return the requested dataset ----
   # Note that we use eventReactive() here, which depends on
   # input$update (the action button), so that the output is only
   # updated when the user clicks the button
+  
+  datasetInput <- eventReactive(input$update, {
+      extract <- input$Var1
+      yearno <- input$Var2
+      monthno <- input$Var3
+      readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
+      })
+      
   output$contents <- renderTable({
-  yearno <- input$Var2
-  monthno <- input$Var3
-  amb_filtered <- readambweb(extract) %>% dplyr::filter(Year == yearno, Month == monthno)
-  
-  return(head(amb_filtered))
-  
-  #datasetInput <- eventReactive(input$update, {
-  #  switch(input$dataset,
-  #         "rock" = rock,
-  #         "pressure" = pressure,
-  #         "cars" = cars)
-  #}, ignoreNULL = FALSE)
-  
-  # Generate a summary of the dataset ----
-  #output$summary <- renderPrint({
-  #  dataset <- datasetInput()
-  #  summary(dataset)
-  #})
-  
-  # Show the first "n" observations ----
-  # The use of isolate() is necessary because we don't want the table
-  # to update whenever input$obs changes (only when the user clicks
-  # the action button)
-  #output$view <- renderTable({
-  #  head(datasetInput(), n = isolate(input$obs))
-  })
-  
+    amb_filtered <- datasetInput()
+    return(head(amb_filtered))
+    })
+      
+
+        # datasetInput <- eventReactive(input$update, {
+        #  switch(input$dataset,
+        #         "rock" = rock,
+        #         "pressure" = pressure,
+        #         "cars" = cars)
+        # }, ignoreNULL = FALSE)
+
+        # Generate a summary of the dataset ----
+        # output$summary <- renderPrint({
+        #  dataset <- datasetInput()
+        #  summary(dataset)
+        # })
+
+        # Show the first "n" observations ----
+        # The use of isolate() is necessary because we don't want the table
+        # to update whenever input$obs changes (only when the user clicks
+        # the action button)
+        # output$view <- renderTable({
+        #  head(datasetInput(), n = isolate(input$obs))
+      
 }
 
 # Create Shiny app ----
