@@ -69,7 +69,7 @@ processdata <- function(extract) {
     test6false = numeric(),
     test7true = numeric(),
     test7false = numeric(),
-    dashes = numeric()
+    test8false = numeric()
   )
   
   ## Loop through whole process for each period
