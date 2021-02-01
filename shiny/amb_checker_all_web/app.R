@@ -47,12 +47,6 @@ processdata <- function(extract) {
   amb <- readambweb(extract)
   
   ## This is the full amb_checker_all script:
-  ## Check for dashes - if this is not zero needs to be fixed in the file
-  dashes <- grep("–|-", amb)
-  
-  ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
-  amb[, -c(1:5)] <- suppressWarnings(apply(amb[, -c(1:5)], 2, as.numeric))
-  amb[is.na(amb)] <- 0
   
   ## Determine the periods required
   periods <- paste(amb$Year, amb$Month, sep = "-") %>% unique()
@@ -74,15 +68,23 @@ processdata <- function(extract) {
     test6true = numeric(),
     test6false = numeric(),
     test7true = numeric(),
-    test7false = numeric()
+    test7false = numeric(),
+    dashes = numeric()
   )
   
   ## Loop through whole process for each period
   for (period in (1:(length(periods1)))) {
     yearmonth <- periods1[period]
-    output[period, ] <- c(yearmonth, rep(0, each = 14))
+    output[period, ] <- c(yearmonth, rep(0, each = 15))
     
     amb_filtered <- amb %>% dplyr::filter(paste(Year, Month, sep = "-") == yearmonth)
+    
+    ## Check for dashes - if this is not zero needs to be fixed in the file
+    dashes <- grep("–|-", amb_filtered)
+    
+    ## Convert strings to numeric and cleanse (first 5 columns not to be changed)
+    amb_filtered[, -c(1:5)] <- suppressWarnings(apply(amb_filtered[, -c(1:5)], 2, as.numeric))
+    amb_filtered[is.na(amb_filtered)] <- 0
     
     ## Identify region and all england rows
     regions <- grep("Y[0-9][0-9]", amb_filtered$Org.Code)
@@ -471,6 +473,9 @@ processdata <- function(extract) {
     output[period, 14] <- data.frame(`TRUE` = length(which(SingleRegion == T)))
     output[period, 15] <- data.frame(`FALSE` = length(which(SingleRegion == F)))
   }
+  
+  #period <- periods1[1]
+  output[period, 16] <- if(length(dashes) == 0) 0 else length(dashes)
   
   ## reformat outpput and check false columns total
   fc <- grep("false", names(output))
