@@ -3,7 +3,7 @@ library(shiny)
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
 
-# Define UI for miles per gallon app ----
+# Define UI  ----
 shinyUI(fluidPage(
   # App title ----
   titlePanel("Amb CSV web checker"),
@@ -17,7 +17,7 @@ shinyUI(fluidPage(
       column(
         width = 5, offset = 0,
         sidebarPanel(
-          # Input: Selector for variable to plot against mpg ----
+          # Input: Selector for variable Extract ----
           selectInput("Var1", "Extract:", Extract),
 
           # Input: Checkbox for whether outliers should be included ----
@@ -29,7 +29,6 @@ shinyUI(fluidPage(
           # the computations required to render output are inordinately
           # time-consuming.
           actionButton("update", "Check CSV")
-          # ,actionButton("dashes", "Check Dashes")
         )
       )
     ),
@@ -39,10 +38,8 @@ shinyUI(fluidPage(
 
       # Output: Data file ----
       textOutput("Invalid"),
-      # textOutput("dashes"),
       tableOutput("contents"),
       width = 12
     )
   )
- )
-)
+))
