@@ -3,7 +3,7 @@ library(shiny)
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
 
-# Define UI for miles per gallon app ----
+# Define UI  ----
 shinyUI(fluidPage(
   # App title ----
   titlePanel("Amb CSV Folder Checker"),
@@ -17,36 +17,45 @@ shinyUI(fluidPage(
       column(
         width = 5, offset = 0,
         sidebarPanel(
-          # Input: Selector for variable to plot against mpg ----
+          # Input: Selector for variable Extract ----
           selectInput("Var1", "Extract:", Extract),
 
           # Input: Select a file ----
           fileInput("file1", "Choose CSV File",
-                    multiple = FALSE,
-                    accept = c("text/csv",
-                               "text/comma-separated-values,text/plain",
-                               ".csv")),
-          
+            multiple = FALSE,
+            accept = c(
+              "text/csv",
+              "text/comma-separated-values,text/plain",
+              ".csv"
+            )
+          ),
+
           # Horizontal line ----
           tags$hr(),
-          
+
           # Input: Checkbox if file has header ----
           checkboxInput("header", "Header", TRUE),
-          
+
           # Input: Select separator ----
           radioButtons("sep", "Separator",
-                       choices = c(Comma = ",",
-                                   Semicolon = ";",
-                                   Tab = "\t"),
-                       selected = ","),
-          
+            choices = c(
+              Comma = ",",
+              Semicolon = ";",
+              Tab = "\t"
+            ),
+            selected = ","
+          ),
+
           # Input: Select quotes ----
           radioButtons("quote", "Quote",
-                       choices = c(None = "",
-                                   "Double Quote" = '"',
-                                   "Single Quote" = "'"),
-                       selected = '"'),
-          
+            choices = c(
+              None = "",
+              "Double Quote" = '"',
+              "Single Quote" = "'"
+            ),
+            selected = '"'
+          ),
+
           # Horizontal line ----
           tags$hr(),
           # Input: actionButton() to defer the rendering of output ----
@@ -55,7 +64,6 @@ shinyUI(fluidPage(
           # the computations required to render output are inordinately
           # time-consuming.
           actionButton("update", "Check CSV")
-          # ,actionButton("dashes", "Check Dashes")
         )
       )
     ),
@@ -65,10 +73,8 @@ shinyUI(fluidPage(
 
       # Output: Data file ----
       textOutput("Invalid"),
-      # textOutput("dashes"),
       tableOutput("contents"),
       width = 12
     )
   )
- )
-)
+))
