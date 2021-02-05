@@ -1,17 +1,16 @@
 options(stringsAsFactors = FALSE)
 ## Load packages - check if installed first - if not install them
-#if (!require(conflicted)) install.packages("conflicted")
+# if (!require(conflicted)) install.packages("conflicted")
 library(conflicted)
 conflicted::conflict_prefer("filter", "dplyr") # prefer dplyr for filter function
-#if (!require(tidyverse)) install.packages("tidyverse")
+# if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
-#if (!require(rvest)) install.packages("rvest")
+# if (!require(rvest)) install.packages("rvest")
 library(rvest)
-#if (!require(shiny)) install.packages("shiny")
+# if (!require(shiny)) install.packages("shiny")
 library(shiny)
 
-
-# Define server logic to plot various variables against mpg ----
+# Define server logic  ----
 shinyServer(function(input, output) {
 
   # Return the requested dataset ----
@@ -44,6 +43,4 @@ shinyServer(function(input, output) {
       " invalid data item(s)"
     ))
   })
-
 })
-
