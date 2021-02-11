@@ -345,6 +345,8 @@ SingleRegion <- amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Or
   select(-1) == amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Region.Code), -c(1:4)] %>%
   arrange(Org.Name) %>%
   select(-1)
+SingleRegion <- as.data.frame(SingleRegion)
+rownames(SingleRegion) <- RegionMap$Org.Code[-which(RegionMap$Region.Code %in% rc)][-england]
 test7 <- cbind(
   data.frame(`TRUE` = length(which(SingleRegion == T))),
   data.frame(`FALSE` = length(which(SingleRegion == F)))
