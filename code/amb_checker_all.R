@@ -49,6 +49,9 @@ if (method == "web") {
   print("Unknown Parameter: Method")
 }
 
+## Filter to Year >= 2019 
+amb <- amb %>% filter(Year >= 2019)
+
 ## Check for dashes - if this is not zero needs to be fixed in the file
 dashes <- grep("–|-", amb)
 
@@ -76,13 +79,14 @@ output <- data.frame(
   test6true = numeric(),
   test6false = numeric(),
   test7true = numeric(),
-  test7false = numeric()
+  test7false = numeric(),
+  test8false = numeric()
 )
 
 ## Loop through whole process for each period
 for (period in (1:(length(periods1)))) {
   yearmonth <- periods1[period]
-  output[period, ] <- c(yearmonth, rep(0, each = 14))
+  output[period, ] <- c(yearmonth, rep(0, each = 15))
 
   amb_filtered <- amb %>% dplyr::filter(paste(Year, Month, sep = "-") == yearmonth)
 
@@ -301,6 +305,106 @@ for (period in (1:(length(periods1)))) {
   ## patch NaN with 0
   mylistw <- rapply(mylistw, f = function(x) ifelse(is.nan(x), 0, x), how = "replace")
 
+  ## additional validation checks for inconsistencies
+  if(extract == "ambco") {
+    ## If ambco
+    valuesgtlt <- data.frame(
+      num =
+        c(
+          "P1b","K4b","M4b","M3n","R3s","R4s","R1r","R2r","R5b"
+        ),
+      denom =
+        c(
+          "P1n","K4n","M4n","M1n","R3n","R4n","R1n","R2n","R5n"
+        )
+    )
+    
+    ## Create a list object mylistgtlt
+    mylistgtlt <- vector("list", length = nrow(valuesgtlt)) # greaterthanlessthan
+    
+    ## Loop through valuesgtlt
+    i <- 1
+    for (i in (1:nrow(valuesgtlt))) {
+      num <- valuesgtlt$num[i]
+      denom <- valuesgtlt$denom[i]
+      numi <- which(names(amb_filtered) == num)
+      denomi <- which(names(amb_filtered) == denom)
+      mylistgtlt[[i]] <- which(amb_filtered[,numi] > amb_filtered[,denomi])
+    }
+    
+    ## Set gtltv to length of mylistlt[[1]]
+    gtltv <- length(mylistgtlt[[1]])
+    
+    ## Pick out the values in mylistgtlt and cat them into gtltv then sum the total
+    for (j in (2:nrow(valuesgtlt))) {
+      gtltv <- c(gtltv, length(mylistgtlt[[j]]))
+      gtltv <- sum(gtltv)
+    }
+    
+  } else {
+    ## If ambsys
+    # we don't have equivalences for ambsys but we have a list of items that should equal
+    # each other
+    if(extract == "ambsys") {
+      xyz <- 0
+      
+      ## A7 = A17+A56
+      xyz <- amb_filtered[which(amb_filtered$A7 != amb_filtered$A17+amb_filtered$A56), c(
+        "Year", "Month", "Org.Code", "A7", "A17", "A56")] %>% 
+        mutate(Total=A17+A56) %>% nrow()
+      
+      ## A8 = A115+A74+A78
+      xyz <- xyz + amb_filtered[which(
+        amb_filtered$A8 != amb_filtered$A115+amb_filtered$A74+amb_filtered$A78 && 
+          amb_filtered$A74+amb_filtered$A78 > 0), 
+        c("Year", "Month", "Org.Code", "A8", "A115", "A74", "A78")] %>%
+        mutate(Total = A115+A74+A78) %>% nrow()
+      
+      ## A10 = A119+A75+A79
+      xyz <- xyz + amb_filtered[which(
+        amb_filtered$A10 != amb_filtered$A119+amb_filtered$A75+amb_filtered$A79 && 
+          amb_filtered$A119+amb_filtered$A75+amb_filtered$A79 > 0 
+      )
+      , c("Year", "Month", "Org.Code", "A10", "A119", "A75", "A79")] %>%
+        mutate(Total = A119+A75+A79) %>% nrow()
+      
+      ## A24 = A116+A82+A94
+      xyz <- xyz+ amb_filtered[which(
+        amb_filtered$A24 != amb_filtered$A116+amb_filtered$A82+amb_filtered$A94 && 
+          amb_filtered$A116+amb_filtered$A82+amb_filtered$A94 > 0 
+      )
+      , c("Year", "Month", "Org.Code", "A24", "A116", "A82", "A94")] %>%
+        mutate(Total = A116+A82+A94) %>% nrow()
+      
+      ## A30 = A120+A85+A97
+      xyz <- xyz+amb_filtered[which(
+        amb_filtered$A30 != amb_filtered$A120+amb_filtered$A85+amb_filtered$A97 && 
+          amb_filtered$A120+amb_filtered$A85+amb_filtered$A97 > 0 
+      )
+      , c("Year", "Month", "Org.Code", "A30", "A120", "A85", "A97")] %>%
+        mutate(Total = A120+A85+A97) %>% nrow()
+      
+      ## A56 = A53+A54+A55
+      xyz <- xyz+amb_filtered[which(
+        amb_filtered$A56 != amb_filtered$A53+amb_filtered$A54+amb_filtered$A55 && 
+          amb_filtered$A53+amb_filtered$A54+amb_filtered$A55 > 0 
+      )
+      , c("Year", "Month", "Org.Code", "A56", "A53", "A54", "A55")] %>%
+        mutate(Total = A53+A54+A55) %>% nrow()
+      
+      ## A17 = A18+A19+A21+A22
+      xyz <- xyz+amb_filtered[which(
+        amb_filtered$A17 != amb_filtered$A18+amb_filtered$A19+amb_filtered$A21+amb_filtered$A22 && 
+          amb_filtered$A18+amb_filtered$A19+amb_filtered$A21+amb_filtered$A22 > 0 
+      )
+      , c("Year", "Month", "Org.Code", "A17", "A18", "A19", "A21", "A22")] %>%
+        mutate(Total = A18+A19+A21+A22) %>% nrow()
+      gtltv <- xyz
+    }
+  }
+  
+  #sum(gtltv)
+  
   ####################################
   ## Tests
   ####################################
@@ -472,6 +576,7 @@ for (period in (1:(length(periods1)))) {
 
   output[period, 14] <- data.frame(`TRUE` = length(which(SingleRegion == T)))
   output[period, 15] <- data.frame(`FALSE` = length(which(SingleRegion == F)))
+  output[period, 16] <- sum(gtltv)
 }
 
 ## Final output sorted by period
