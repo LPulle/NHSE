@@ -1,28 +1,13 @@
-## If R version < 4.0 you need to set this option
 options(stringsAsFactors = FALSE)
-
-## Load packages - check if installed first - if not install them
-if (!require(conflicted)) install.packages("conflicted")
-library(conflicted)
-conflicted::conflict_prefer("filter", "dplyr") # prefer dplyr for filter function
-if (!require(tidyverse)) install.packages("tidyverse")
-library(tidyverse)
-if (!require(rvest)) install.packages("rvest")
-library(rvest)
-if (!require(shiny)) install.packages("shiny")
-library(shiny)
-
 # Data pre-processing ----
 ## Load some base data so the server functions can load
-load("initialdata.rda")
+load("/srv/shiny-server/amb_checker_all_web/initialdata.rda")
 
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
-Year <- seq(2020, 2050, by = 1)
-Month <- seq(1, 12, by = 1)
 
 ## Custom function to Find the latest amb url from NHSE website
-readambweb <- function(x) {
+readambweblive <- function(x) {
   html <- xml2::read_html("https://www.england.nhs.uk/statistics/statistical-work-areas/ambulance-quality-indicators/")
   if (extract %in% c("ambco", "ambsys")) {
     css_selector <- paste0(switch(x, ambco = "[href*='AmbCO']", ambsys = "[href*='AmbSYS']"), "[href$='.csv']")
@@ -33,6 +18,17 @@ readambweb <- function(x) {
   } else {
   }
 }
+
+## So we don't keep hammering NHSE's website this picks up the data from the rda
+readambweb <- function(x) {
+  if (x == "ambsys") {
+    ambsys
+  } else if (x == "ambco") {
+    ambco
+  } else {
+  }
+}
+
 
 ## Custom round function - R uses IEE 754 rules which we don't want
 rnd <- function(x) trunc(x + sign(x) * 0.5)
@@ -45,9 +41,6 @@ NumberOfDays <- function(date) {
 ## Main Code as custom function
 processdata <- function(extract) {
   amb <- readambweb(extract)
-
-  ## This is the full amb_checker_all script:
-
   ## Determine the periods required
   periods <- paste(amb$Year, amb$Month, sep = "-") %>% unique()
   periods1 <- periods
@@ -485,82 +478,3 @@ processdata <- function(extract) {
   ## Return output to the go into output$datasetInput
   return(output)
 }
-
-# Define UI  ----
-ui <- fluidPage(
-  # App title ----
-  titlePanel("Amb CSV web checker"),
-
-
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-
-    # Sidebar panel for inputs ----
-    fluidRow(
-      column(
-        width = 5, offset = 0,
-        sidebarPanel(
-          # Input: Selector for Extract ----
-          selectInput("Var1", "Extract:", Extract),
-
-          # Input: Checkbox for whether outliers should be included ----
-          # checkboxInput("outliers", "Show outliers", TRUE)
-
-          # Input: actionButton() to defer the rendering of output ----
-          # until the user explicitly clicks the button (rather than
-          # doing it immediately when inputs change). This is useful if
-          # the computations required to render output are inordinately
-          # time-consuming.
-          actionButton("update", "Check CSV")
-        )
-      )
-    ),
-
-    # Main panel for displaying outputs ----
-    mainPanel(
-
-      # Output: Data file ----
-      textOutput("Invalid"),
-      # textOutput("dashes"),
-      tableOutput("contents"),
-      width = 12
-    )
-  )
-)
-
-# Define server logic  ----
-server <- function(input, output) {
-
-  # Return the requested dataset ----
-  # Note that we use eventReactive() here, which depends on
-  # input$update (the action button), so that the output is only
-  # updated when the user clicks the button
-
-  datasetInput <- eventReactive(input$update, {
-    extract <- input$Var1
-    processdata(extract)
-  })
-
-
-  ## Render a table using datasetInput as html and put it into output$contents
-  output$contents <- renderTable(
-    {
-      amb_filtered <- datasetInput()
-    },
-    type = "html",
-    bordered = TRUE,
-    striped = TRUE,
-    align = "c"
-  )
-
-  ## Count the invalid records and render as text into output$Invalid
-  output$Invalid <- renderText({
-    print(paste0(
-      "There are ", sum(colSums(datasetInput()[, grep("false", names(datasetInput()))])),
-      " invalid data item(s)"
-    ))
-  })
-}
-
-# Create Shiny app ----
-shinyApp(ui, server)
