@@ -14,7 +14,7 @@ library(shiny)
 
 # Data pre-processing ----
 ## Load some base data so the server functions can load
-#load("initialdata.rda")
+load("initialdata.rda")
 
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
