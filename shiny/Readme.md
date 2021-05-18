@@ -12,5 +12,5 @@
 * Dashes is checking for dashes in the data for that period
 #### Example Output from web app:
 ![AmbwebOutput](https://github.com/LPulle/NHSE-Analytics/blob/master/AmbWebOutput.jpg)
-
-
+#### Example Output from folder app:
+![AmbwebOutput](https://github.com/LPulle/NHSE-Analytics/blob/master/AmbFileOutput.jpg)
