@@ -14,7 +14,7 @@ library(shiny)
 
 # Data pre-processing ----
 ## Load some base data so the server functions can load
-load("initialdata.rda")
+#load("initialdata.rda")
 
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
@@ -146,32 +146,30 @@ server <- function(input, output, session) {
     ## Create data frame to hold test outputs
     output <- data.frame(
       Period = character(),
-      SummedTrue = numeric(),
-      SummedFalse = numeric(),
-      MeanedTrue = numeric(),
-      MeanedFalse = numeric(),
-      WeightedTrue = numeric(),
-      WeightedFalse = numeric(),
-      RegionSummedTrue = numeric(),
-      RegionSummedFalse = numeric(),
-      RegionMeanedTrue = numeric(),
-      RegionMeanedFalse = numeric(),
-      RegionWeightedTrue = numeric(),
-      RegionWeightedFalse = numeric(),
-      SingleTrue = numeric(),
-      SingleFalse = numeric(),
-      OtherValFalse = numeric(),
-      Dashes = numeric(),
-      Records = numeric()
+      test1true = numeric(),
+      test1false = numeric(),
+      test2true = numeric(),
+      test2false = numeric(),
+      test3true = numeric(),
+      test3false = numeric(),
+      test4true = numeric(),
+      test4false = numeric(),
+      test5true = numeric(),
+      test5false = numeric(),
+      test6true = numeric(),
+      test6false = numeric(),
+      test7true = numeric(),
+      test7false = numeric(),
+      test8false = numeric(),
+      dashes = numeric()
     )
-    
+
     ## Loop through whole process for each period
     for (period in (1:(length(periods1)))) {
       yearmonth <- periods1[period]
-      output[period, ] <- c(yearmonth, rep(0, each = 17))
+      output[period, ] <- c(yearmonth, rep(0, each = 16))
 
       amb_filtered <- amb %>% dplyr::filter(paste(Year, Month, sep = "-") == yearmonth)
-      output$Records[period]<- nrow(amb_filtered)
 
       ## Check for dashes - if this is not zero needs to be fixed in the file
       dashes <- grep("–|-", amb_filtered)
@@ -728,7 +726,7 @@ server <- function(input, output, session) {
   ## Render table for output$contents
   output$contents <- renderTable(
     {
-      amb_filtered <- datasetInput()[,c(1,3,5,7,9,11,13,15,16,17,18)]
+      amb_filtered <- datasetInput()
     },
     type = "html",
     bordered = TRUE,
@@ -739,7 +737,7 @@ server <- function(input, output, session) {
   ## Count the invalid records and render as text into output$Invalid
   output$Invalid <- renderText({
     print(paste0(
-      "There are ", sum(colSums(datasetInput()[, grep("False", names(datasetInput()))])),
+      "There are ", sum(colSums(datasetInput()[, grep("false", names(datasetInput()))])),
       " invalid data item(s)"
     ))
   })
