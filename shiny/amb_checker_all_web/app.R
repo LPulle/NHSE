@@ -124,7 +124,7 @@ processdata <- function(extract) {
       summed <- which(names(amb_filtered) %in% names(amb_filtered)[-weighted][-c(1:5)])
     } else if (extract == "ambsys") {
 	summedlookup <- summedlookup
-      summed <- which(names(amb_filtered) %in% summedlookup)
+      summed <- which(names(amb_filtered) %in% summedlookup$x)
     } else {
       print("Unknown Parameter: Extract")
     }
