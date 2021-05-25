@@ -1,0 +1,13 @@
+name: amb_checker_all_folder
+title: amb_checker_all_folder
+username:
+account: nhseiuecperformance
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4182076
+bundleId: 4637428
+url: https://nhseiuecperformance.shinyapps.io/amb_checker_all_folder/
+when: 1621945186.00748
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_old.R|global.R|server.R|ui.R

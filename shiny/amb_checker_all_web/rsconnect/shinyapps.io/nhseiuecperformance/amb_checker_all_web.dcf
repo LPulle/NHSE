@@ -5,7 +5,9 @@ account: nhseiuecperformance
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4181719
-bundleId: 4637141
+bundleId: 4637398
 url: https://nhseiuecperformance.shinyapps.io/amb_checker_all_web/
-when: 1621940018.8995
-lastSyncTime: 1621940018.8995
+when: 1621944557.42157
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_old.R|global.R|server.R|ui.R
