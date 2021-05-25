@@ -1,0 +1,11 @@
+name: amb_checker_all_web
+title:
+username:
+account: nhseiuecperformance
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4181719
+bundleId: 4637141
+url: https://nhseiuecperformance.shinyapps.io/amb_checker_all_web/
+when: 1621940018.8995
+lastSyncTime: 1621940018.8995

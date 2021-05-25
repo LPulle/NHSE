@@ -34,6 +34,11 @@ readambweb <- function(x) {
   }
 }
 
+## Preload ambsys lookup tables
+weightedlookup <- read.csv("weightedlookup.csv")
+meanlookup <- read.csv("meanlookup.csv")
+summedlookup <- read.csv("summedlookup.csv")
+
 ## Custom round function - R uses IEE 754 rules which we don't want
 rnd <- function(x) trunc(x + sign(x) * 0.5)
 
@@ -108,18 +113,7 @@ processdata <- function(extract) {
       )
       weightedlookup <- data.frame(cbind(num = names(amb_filtered[, weighted]), denom = paste0(substring(names(amb_filtered[, weighted]), 1, 2), "n")))
     } else if (extract == "ambsys") {
-      weightedlookup <- data.frame(
-        num =
-          c(
-            "A4", "A5", "A6", "A16", "A26", "A29", "A32", "A35", "A38", "A52", "A84", "A87",
-            "A90", "A93", "A96", "A99", "A102", "A105", "A109", "A114", "A118", "A122"
-          ),
-        denom =
-          c(
-            "A1", "A1", "A1", "A13", "A8", "A9", "A10", "A11", "A12", "A49", "A74", "A75",
-            "A76", "A77", "A78", "A79", "A80", "A81", "A106", "A1", "A115", "A119"
-          )
-      )
+      weightedlookup <- weightedlookup
       weighted <- which(names(amb_filtered) %in% weightedlookup$num)
     } else {
       print("Unknown Parameter: Extract")
@@ -129,35 +123,14 @@ processdata <- function(extract) {
     if (extract == "ambco") {
       summed <- which(names(amb_filtered) %in% names(amb_filtered)[-weighted][-c(1:5)])
     } else if (extract == "ambsys") {
-      summed <- which(names(amb_filtered) %in%
-        c(
-          "A0", "A1", "A2", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A18", "A19", "A20", "A21", "A22", "A23", "A24", "A27", "A30",
-          "A33", "A36", "A49", "A50", "A53", "A56", "A57", "A58", "A59", "A60", "A61", "A62", "A65", "A68", "A71", "A74", "A75", "A76", "A77", "A78",
-          "A79", "A80", "A81", "A82", "A85", "A88", "A91", "A94", "A97", "A100", "A103", "A106", "A107", "A110", "A111", "A112", "A113", "A115", "A116",
-          "A119", "A120", "A17", "A39", "A40", "A41", "A42", "A43", "A44", "A45", "A46", "A47", "A48", "A54", "A55"
-        ))
+	summedlookup <- summedlookup
+      summed <- which(names(amb_filtered) %in% summedlookup)
     } else {
       print("Unknown Parameter: Extract")
     }
 
     ## mean - this only applies to ambsys
-    meanlookup <- data.frame(
-      metric =
-        c(
-          "A3", "A15", "A25", "A28", "A31", "A34", "A37", "A51", "A63", "A66", "A69", "A72", "A83", "A86", "A89", "A92", "A95", "A98",
-          "A101", "A104", "A108", "A117", "A121"
-        ),
-      num =
-        c(
-          "A2", "A14", "A24", "A27", "A30", "A33", "A36", "A50", "A62", "A65", "A68", "A71", "A82", "A85", "A88", "A91", "A94", "A97",
-          "A100", "A103", "A107", "A116", "A120"
-        ),
-      denom =
-        c(
-          "A1", "A13", "A8", "A9", "A10", "A11", "A12", "A49", "A58", "A59", "A60", "A61", "A74", "A75", "A76", "A77", "A78", "A79",
-          "A80", "A81", "A106", "A115", "A119"
-        )
-    )
+    meanlookup <- meanlookup
     meaned <- which(names(amb_filtered) %in% meanlookup$metric)
 
 
