@@ -465,7 +465,9 @@ server <- function(input, output, session) {
         }
       }
       
-      #sum(gtltv)
+      ## gtltv may break in the future so set it to 0 for now
+      ## comment this out if it is neded again
+      gtltv <- 0
       
       ####################################
       ## Tests
@@ -633,7 +635,7 @@ server <- function(input, output, session) {
       output[period, 16] <- sum(gtltv)
     }
 
-    output[period, 16] <- if (length(dashes) == 0) 0 else length(dashes)
+    output[period, 17] <- if (length(dashes) == 0) 0 else length(dashes)
 
     ## reformat outpput and check false columns total
     fc <- grep("false", names(output))
