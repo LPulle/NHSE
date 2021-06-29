@@ -472,32 +472,32 @@ processdata <- function(extract) {
     testregions <- data.frame(lapply(c(1:length(mylist)), function(i) mylist[[i]][, 1] == mylist[[i]][, 2]))
     names(testregions) <- rc # c("Region1", "Region2", "Region3")
     output[period, 8] <-
-      data.frame(table(rbind(testregions[, 1], testregions[, 2], testregions[, 3]))) %>%
+      data.frame(table(t(testregions))) %>%
       filter(Var1 == T) %>%
       select(Freq)
-
+    
     output[period, 9] <-
-      if (nrow(data.frame(table(rbind(testregions[, 1], testregions[, 2], testregions[, 3]))) %>%
-        filter(Var1 == F)) > 0) {
-        data.frame(table(rbind(testregions[, 1], testregions[, 2], testregions[, 3]))) %>%
+      if (nrow(data.frame(table(t(testregions))) %>%
+               filter(Var1 == F)) > 0) {
+        data.frame(table(t(testregions))) %>%
           filter(Var1 == F) %>%
           select(Freq)
       } else {
         0
       }
-
+    
     ## test meaned columns match region
     if (extract == "ambsys") {
       testregionsm <- data.frame(lapply(c(1:length(mylistm)), function(i) mylistm[[i]][, 1] == mylistm[[i]][, 2]))
       names(testregionsm) <- rc # c("Region1", "Region2", "Region3")
       output[period, 10] <-
-        data.frame(table(rbind(testregionsm[, 1], testregionsm[, 2], testregionsm[, 3]))) %>%
+        data.frame(table(t(testregionsm))) %>%
         filter(Var1 == T) %>%
         select(Freq)
       output[period, 11] <-
-        if (nrow(data.frame(table(rbind(testregionsm[, 1], testregionsm[, 2], testregionsm[, 3]))) %>%
-          filter(Var1 == F)) > 0) {
-          data.frame(table(rbind(testregionsm[, 1], testregionsm[, 2], testregionsm[, 3]))) %>%
+        if (nrow(data.frame(table(t(testregionsm))) %>%
+                 filter(Var1 == F)) > 0) {
+          data.frame(table(t(testregionsm))) %>%
             filter(Var1 == F) %>%
             select(Freq)
         } else {
@@ -506,8 +506,8 @@ processdata <- function(extract) {
     } else {
       0
     }
-
-    ## test weighted columns match region
+    
+    
     testregionsw <- data.frame(lapply(
       c(1:length(mylistw)),
       function(i) {
@@ -516,23 +516,23 @@ processdata <- function(extract) {
         }, mylistw[[i]][, 1], mylistw[[i]][, 2])
       }
     ))
-
+    
     names(testregionsw) <- rc # c("Region1", "Region2", "Region3")
     output[period, 12] <-
-      data.frame(table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))) %>%
+      data.frame(table(t(testregionsw))) %>%
       filter(Var1 == T) %>%
       select(Freq)
-
+    
     output[period, 13] <-
-      if (nrow(data.frame(table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))) %>%
-        filter(Var1 == F)) > 0) {
-        data.frame(table(rbind(testregionsw[, 1], testregionsw[, 2], testregionsw[, 3]))) %>%
+      if (nrow(data.frame(table(t(testregionsw))) %>%
+               filter(Var1 == F)) > 0) {
+        data.frame(table(t(testregionsw))) %>%
           filter(Var1 == F) %>%
           select(Freq)
       } else {
         0
       }
-
+    
     ## test single trust to single region
     RegionMapSingle <- RegionMap[-which(RegionMap$Region.Code %in% rc), ][-england, ]
     SingleRegion <- amb_filtered[which(amb_filtered$Org.Code %in% RegionMapSingle$Org.Code), -c(1:4)] %>%
