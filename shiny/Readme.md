@@ -4,7 +4,7 @@
 * Folder checker: https://nhseiuecperformance.shinyapps.io/amb_checker_all_folder -->
 
 ## Update 2022-10-25
-* Deployed version to shinyapps.io using this github account
+* Deployed version to shinyapps.io using this github account via amb_checker_all_web_github
 * App is sourced direct from github repo allowing changes to cascade without re-deploying
 
 ##### The code performs 9 checks on the data:
