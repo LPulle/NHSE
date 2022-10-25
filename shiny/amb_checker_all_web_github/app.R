@@ -14,7 +14,7 @@ library(shiny)
 
 # Data pre-processing ----
 ## Load some base data so the server functions can load
-load("https://raw.githubusercontent.com/LPulle/NHSE-Analytics/master/shiny/amb_checker_all_web/initialdata.rda")
+load(url("https://github.com/LPulle/NHSE-Analytics/blob/master/shiny/amb_checker_all_web/initialdata.rda?raw=true"))
 
 ## Data for the input selectors
 Extract <- c("ambsys", "ambco")
