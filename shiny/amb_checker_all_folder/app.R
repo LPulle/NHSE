@@ -710,7 +710,7 @@ server <- function(input, output, session) {
     striped = TRUE,
     align = "c"
   )
-
+ 
   ## Count the invalid records and render as text into output$Invalid
   output$Invalid <- renderText({
     print(paste0(
