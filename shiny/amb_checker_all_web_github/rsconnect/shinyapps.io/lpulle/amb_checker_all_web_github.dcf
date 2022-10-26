@@ -1,0 +1,13 @@
+name: amb_checker_all_web_github
+title: amb_checker_all_web_github
+username:
+account: lpulle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7412651
+bundleId: 6439143
+url: https://lpulle.shinyapps.io/amb_checker_all_web_github/
+when: 1666704959.97867
+lastSyncTime: 1666704959.97868
+asMultiple: FALSE
+asStatic: FALSE
