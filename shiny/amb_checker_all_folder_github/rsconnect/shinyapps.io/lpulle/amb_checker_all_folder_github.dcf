@@ -1,0 +1,13 @@
+name: amb_checker_all_folder_github
+title: amb_checker_all_folder_github
+username:
+account: lpulle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7412878
+bundleId: 6439171
+url: https://lpulle.shinyapps.io/amb_checker_all_folder_github/
+when: 1666705598.95985
+lastSyncTime: 1666705598.95986
+asMultiple: FALSE
+asStatic: FALSE
