@@ -142,6 +142,11 @@ server <- function(input, output, session) {
       quote = input$quote
     )
 
+    
+    ## Remove commas from the numeric columns if there are any
+    metrics <- names(amb)
+    for(i in (6:length(metrics))) {amb[,i] <- gsub(",", "", amb[,i])}
+    
     ## This is the full amb_checker_all script:
 
     ## Determine the periods required
@@ -175,7 +180,7 @@ server <- function(input, output, session) {
       yearmonth <- periods1[period]
       output[period, ] <- c(yearmonth, rep(0, each = 17))
 
-      amb_filtered <- amb %>% dplyr::filter(paste(Year, Month, sep = "-") == yearmonth)
+      amb_filtered <- amb %>% dplyr::filter(paste(Year, Month, sep = "-") == yearmonth) %>% arrange(Year,Month,Org.Code)
       output$Records[period]<- nrow(amb_filtered)
 
       ## Check for dashes - if this is not zero needs to be fixed in the file
