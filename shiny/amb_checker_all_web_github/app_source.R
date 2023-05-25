@@ -100,7 +100,7 @@ for(i in (6:length(metrics))) {amb[,i] <- gsub(",", "", amb[,i])}
 
     ## Identify region and all england rows
     regions <- grep("Y[0-9][0-9]", amb_filtered$Org.Code)
-    england <- which(amb_filtered$Org.Code == "Eng")
+    england <- which(amb_filtered$Org.Code %in% c("Eng" "ENG"))
 
     ## Identify columns which are to be weighted summed and meaned
     ## - There is no pattern for ambsys so has to be hard coded
